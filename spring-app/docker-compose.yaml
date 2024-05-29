@@ -1,0 +1,64 @@
+version: "3.9"
+
+x-spring-env: &spring-env
+  environment:
+    - "SPRING_PROFILES_ACTIVE=docker"
+
+services:
+  postgres:
+    container_name: postgres_container
+    image: postgres:14.8-alpine3.18
+    environment:
+      POSTGRES_DB: "time_tracking_systems"
+      POSTGRES_USER: "migration_user"
+      POSTGRES_PASSWORD: "mgr_user"
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    networks:
+      - time_tracking_systems-network
+
+  pgadmin:
+    container_name: pgadmin_container
+    image: dpage/pgadmin4:7.2
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "admin@ob11to.ru"
+      PGADMIN_DEFAULT_PASSWORD: "admin"
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    ports:
+      - "5050:80"
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 1G
+    networks:
+      - time_tracking_systems-network
+
+  application-backend:
+    container_name: backend_container
+    build: .
+    ports:
+      - "8080:8080"
+    <<: *spring-env
+    depends_on:
+      - postgres
+    volumes:
+      - method-execution-backend-data:/data
+    networks:
+      - time_tracking_systems-network
+
+
+volumes:
+  pg-data:
+  pgadmin-data:
+  method-execution-backend-data:
+
+networks:
+  time_tracking_systems-network:
+    driver: bridge
