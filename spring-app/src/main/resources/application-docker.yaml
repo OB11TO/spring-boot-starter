@@ -1,0 +1,6 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://postgres_container/time_tracking_systems
+    username: migration_user
+    password: mgr_user
+    driver-class-name: org.postgresql.Driver
