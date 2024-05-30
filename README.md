@@ -62,7 +62,7 @@
 ## Настройка
 Настройка `spring-logger-starter` в проекте `spring-app` в `application.yaml`:
 ```yaml
-logging:
+api-logging:
   http:
     level: INFO  # Уровень логирования (DEBUG, INFO, WARNING, ERROR)
     format: JSON  # Формат логирования (JSON или TEXT по умолчанию)
